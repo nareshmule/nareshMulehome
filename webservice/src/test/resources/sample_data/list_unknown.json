@@ -1,0 +1,35 @@
+[
+ {
+	"planeType": "Boeing 787",
+	"code2" : "0001",
+	"toAirport": "LAX",
+	"takeOffData": "2015-01-20",
+	"fromAirport" : "MUA",
+	"price" : 541,
+	"airlineName" : "American Airlines",
+	"SeatsAvailable" : "none",
+	"code1" : "rree"
+ },
+ {
+    "planeType": "Boeing 789",
+	"code2" : "0002",
+	"toAirport": "LUX",
+	"takeOffData": "2015-01-20",
+	"fromAirport" : "AIR",
+	"price" : 450,
+	"airlineName" : "AA Airlines",
+	"SeatsAvailable" : "none",
+	"code1" : "rree"
+},
+ {
+	"planeType": "Boeing 700",
+	"code2" : "0002",
+	"toAirport": "XAL",
+	"takeOffData": "2015-01-20",
+	"fromAirport" : "TAT",
+	"price" : 501,
+	"airlineName" : "American Airlines",
+	"SeatsAvailable" : "none",
+	"code1" : "rree"
+ }
+ ]

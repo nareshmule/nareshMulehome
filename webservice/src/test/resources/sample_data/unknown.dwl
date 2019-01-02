@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exam:Subtract xmlns:exam="http://Example.org">
+         <exam:a>22222</exam:a>
+         <exam:b>1</exam:b>
+      </exam:Subtract>

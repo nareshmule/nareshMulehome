@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="SOAPInput" format="xml">
+      <types:example format="xml" element="test" location="examples/SOAPinput-1.xml"/>
+    </types:type>
+    <types:type name="SOAPOutput" format="xml">
+      <types:example format="xml" element="{http://schemas.xmlsoap.org/soap/envelope/}Envelope" location="examples/SOAPOutput.xml"/>
+    </types:type>
+    <types:type name="SOAPAdd" format="xml">
+      <types:example format="xml" element="{http://schemas.xmlsoap.org/soap/envelope/}Envelope" location="examples/SOAPAddInput-1.xml"/>
+    </types:type>
+    <types:type name="ExamAdd" format="xml">
+      <types:example format="xml" element="{http://Example.org}Add" location="examples/SOAPExamAdd.xml"/>
+    </types:type>
+    <types:type name="SOAPSubtract" format="xml">
+      <types:example format="xml" element="{http://Example.org}Subtract" location="examples/SOAPSubstract.xml"/>
+    </types:type>
+    <types:type name="SOAPSubResp" format="xml">
+      <types:example format="xml" element="{http://schemas.xmlsoap.org/soap/envelope/}Envelope" location="examples/SOAPSubResponse.xml"/>
+    </types:type>
+    <types:type name="flights" format="json">
+      <types:shape format="weave" example="examples/flights.json"><![CDATA[%dw 2.0
+type flights = Array<{|
+  planeType: String, 
+  code2: String, 
+  toAirport: String, 
+  takeOffData: String, 
+  fromAirport: String, 
+  price: Number {"typeId": "int"}, 
+  airlineName: String, 
+  SeatsAvailable: String, 
+  code1: String
+|} | Null> {"MetadataFormat": "json",
+"example": "[{\"planeType\":\"Boeing 787\",\"code2\":\"0001\",\"toAirport\":\"LAX\",\"takeOffData\":\"2015-01-20\",\"fromAirport\":\"MUA\",\"price\":541,\"airlineName\":\"American Airlines\",\"SeatsAvailable\":\"none\",\"code1\":\"rree\"},{\"planeType\":\"Boeing 789\",\"code2\":\"0002\",\"toAirport\":\"LUX\",\"takeOffData\":\"2015-01-20\",\"fromAirport\":\"AIR\",\"price\":450,\"airlineName\":\"AA Airlines\",\"SeatsAvailable\":\"none\",\"code1\":\"rree\"},{\"planeType\":\"Boeing 700\",\"code2\":\"0002\",\"toAirport\":\"XAL\",\"takeOffData\":\"2015-01-20\",\"fromAirport\":\"TAT\",\"price\":500,\"airlineName\":\"American Airlines\",\"SeatsAvailable\":\"none\",\"code1\":\"rree\"},null]"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#73248710-bf33-4fa1-94c2-bc6a5fdec8fa">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="SOAPInput"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#aa74ad2a-f33f-4bd1-b157-2f433fbd371d">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="ExamAdd"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="SOAPOutput"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#1654d40d-7c01-4bae-82bd-2f9948d7a0ca">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="SOAPSubtract"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="SOAPSubResp"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#3e16a814-df42-43bc-82b9-73d726577d8f">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="flights"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

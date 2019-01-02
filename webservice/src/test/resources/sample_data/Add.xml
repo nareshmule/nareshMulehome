@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exam:Add xmlns:exam="http://Example.org">
+         <exam:a>1</exam:a>
+         <exam:b>2</exam:b>
+      </exam:Add>

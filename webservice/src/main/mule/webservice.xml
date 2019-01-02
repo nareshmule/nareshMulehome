@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:java="http://www.mulesoft.org/schema/mule/java" xmlns:xml-module="http://www.mulesoft.org/schema/mule/xml-module"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:apikit-soap="http://www.mulesoft.org/schema/mule/apikit-soap" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit-soap http://www.mulesoft.org/schema/mule/apikit-soap/current/mule-apikit-soap.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/xml-module http://www.mulesoft.org/schema/mule/xml-module/current/mule-xml-module.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="c3f13d84-5439-470a-ad4b-5af53c6416be" >
+		<http:listener-connection host="0.0.0.0" port="8099" />
+	</http:listener-config>
+	<apikit-soap:config name="APIKit_for_SOAP_Configuration" service="CalculatorService" port="ICalculator" doc:name="APIKit for SOAP Configuration" doc:id="6b8b4084-fe4b-44a9-816e-a8b4b7802563" wsdlLocation="Calculator.WSDL" />
+	<xml-module:config name="XML_Config" doc:name="XML Config" doc:id="5ca23ac4-4717-4759-9092-9c87e25002a1" >
+		<xml-module:namespaces >
+			<xml-module:namespace prefix="ns0" uri="http://schemas.xmlsoap.org/soap/envelope/" />
+			<xml-module:namespace prefix="ns01" uri="http://Example.org" />
+		</xml-module:namespaces>
+	</xml-module:config>
+	<flow name="webserviceFlow" doc:id="afc560c2-4d30-400b-bbe4-3be4f2bbdcce" >
+		<http:listener doc:name="Listener" doc:id="ec1e8338-d140-48fc-a789-309b593d602f" config-ref="HTTP_Listener_config" path="/calculator" allowedMethods="POST,GET"/>
+		<logger level="INFO" doc:name="Logger" doc:id="7f96797b-8dd1-42cb-b34c-64e1141c3ddd" message="received soap Request #[attributes] and payload #[payload]"/>
+		<apikit-soap:router doc:name="SOAP Router" doc:id="73248710-bf33-4fa1-94c2-bc6a5fdec8fa" config-ref="APIKit_for_SOAP_Configuration">
+			<apikit-soap:attributes ><![CDATA[#[attributes]]]></apikit-soap:attributes>
+		</apikit-soap:router>
+	</flow>
+	<flow name="Add:\APIKit_for_SOAP_Configuration" doc:id="a368eb60-fe95-4232-ad39-a0a5b727e4c2">
+		<logger level="INFO" doc:name="Logger" doc:id="6ed0784d-6e4c-4081-b72e-98aefdd05d40" message="In Add:\APIKit_for_SOAP_Configuration service #[payload]"/>
+		<set-payload value="#[payload.body]" doc:name="Set Payload" doc:id="55a60932-2c35-4da1-ba13-f3203110dfa1" />
+		<java:invoke-static doc:name="Invoke static" doc:id="635e64e6-ea26-47c0-89a7-9f352e59d43f" class="com.webservice.MathOperations" method="testinvoke()" target="Hello">
+		</java:invoke-static>
+		<java:invoke-static doc:name="Invoke static" doc:id="17a53ace-6a01-4b0f-b232-3b6f69587fca" class="com.webservice.MapUtils" method="sumMapValues(ints)">
+			<java:args ><![CDATA[#[{
+        ints : '1,2,3,4,5,6,4'
+   }]]]></java:args>
+		</java:invoke-static>
+		<ee:transform doc:name="Transform Message" doc:id="aa74ad2a-f33f-4bd1-b157-2f433fbd371d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://schemas.xmlsoap.org/soap/envelope/
+ns ns01 http://Example.org
+---
+{
+	ns0#Envelope: {
+		ns0#Body: {
+			Response: sum([payload.ns01#Add.ns01#a, payload.ns01#Add.ns01#b])
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="d798905c-3b69-458e-9151-c1a8c60d58a5" message="Payload After first transformer #[payload]"/>
+	</flow>
+	<flow name="Subtract:\APIKit_for_SOAP_Configuration" doc:id="df090d34-c953-4d32-a99c-c8f2ac5b50dd" >
+		<logger level="INFO" doc:name="Copy_of_Logger" doc:id="42cd2491-535a-45f7-b8e8-5eab8f7f44a8" message="In Add:\APIKit_for_SOAP_Configuration service #[payload]" />
+		<set-payload value="#[payload.body]" doc:name="Copy_of_Set Payload1" doc:id="1ee78da3-7ce8-4fc4-80bb-78f9e19185ff" />
+		<ee:transform doc:name="Transform Message" doc:id="1654d40d-7c01-4bae-82bd-2f9948d7a0ca" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://schemas.xmlsoap.org/soap/envelope/
+ns ns01 http://Example.org
+---
+{
+	ns0#Envelope: {
+		ns0#Body: {
+			Response: payload.ns01#Subtract.ns01#a - payload.ns01#Subtract.ns01#b
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Copy_of_Logger" doc:id="512732d0-d960-4a5b-b782-e559cf47f30f" message="Payload After first transformer #[payload]" />
+	</flow>
+	<flow name="webserviceFlow1" doc:id="42681867-7a05-4664-8639-858f8d104ba2" >
+		<ee:transform doc:name="Transform Message" doc:id="3e16a814-df42-43bc-82b9-73d726577d8f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+
+payload filter $.price > 500 orderBy $.price groupBy $.toAirport]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

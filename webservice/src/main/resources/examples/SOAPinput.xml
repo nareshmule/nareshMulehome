@@ -1,0 +1,9 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:exam="http://Example.org">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <exam:Add>
+         <exam:a>1</exam:a>
+         <exam:b>2</exam:b>
+      </exam:Add>
+   </soapenv:Body>
+</soapenv:Envelope>
